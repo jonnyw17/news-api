@@ -1,12 +1,16 @@
 const apiKey = '88cd081c4b774aedb70774b2f338b24e';
 const main = document.querySelector('main');
 const sourceSelector = document.querySelector('#sourceSelector');
-const deafultSource = 'the-washington-post';
+const defaultSource = 'the-washington-post';
 
-window.addEventListener('load', async e => {
+window.addEventListener('load', async event => {
   updateNews();
   await updateSources();
-  sourceSelector.value = deafultSource
+  sourceSelector.value = defaultSource;
+
+  sourceSelector.addEventListener('change', event => {
+    updateNews(event.target.value);
+  })
 })
 
 async function updateSources() {
@@ -15,8 +19,8 @@ async function updateSources() {
   sourceSelector.innerHTML = json.sources.map(src => `<option value="${src.id}">${src.name}</option>`).join('\n')
 }
 
-async function updateNews(source = deafultSource) {
-  const res = await fetch(`https://newsapi.org/v2/top-headlines?source=${source}&country=us&category=business&apiKey=${apiKey}`);
+async function updateNews(source = defaultSource) {
+  const res = await fetch(`https://newsapi.org/v2/top-headlines?sources=${source}&apiKey=${apiKey}`);
   const json = await res.json();
   main.innerHTML = json.articles.map(createArticle).join('\n');
 }
